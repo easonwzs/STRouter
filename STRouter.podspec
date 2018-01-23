@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "STRouter"
-  s.version      = "1.0"
+  s.version      = "1.2"
   s.summary      = "STRouter"
 
   s.description  = <<-DESC

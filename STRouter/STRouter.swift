@@ -5,6 +5,7 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
+//  version : 1.2
 
 import Foundation
 import UIKit
@@ -217,7 +218,7 @@ class STRouter : NSObject {
         pathComponents.append(pathSegments.first!)
         
         // 如果只有协议，那么放一个占位符
-        if (pathSegments.count >= 2 && !pathSegments[1].characters.isEmpty) || pathSegments.count < 2 {
+        if (pathSegments.count >= 2 && !pathSegments[1].isEmpty) || pathSegments.count < 2 {
             pathComponents.append(ST_ROUTER_WILDCARD_CHARACTER)
         }
         
@@ -229,7 +230,7 @@ class STRouter : NSObject {
         // 获取地址组成是无法获取'?'分割的元素，所以需要自己添加地址后链接的参数
         let questionMarkSegments = URL.components(separatedBy: "?")
         
-        if questionMarkSegments.count >= 2 && !questionMarkSegments[1].characters.isEmpty {
+        if questionMarkSegments.count >= 2 && !questionMarkSegments[1].isEmpty {
             if let index = URL.range(of: "?")?.upperBound {
                 let p = String(URL[index...])
                 components.append(p)
@@ -259,7 +260,7 @@ class STRouter : NSObject {
             var keys:[String]?
             for var value in keyComponents {
                 value = value.replacingOccurrences(of: " ", with: "")
-                if !value.characters.isEmpty {
+                if !value.isEmpty {
                     if keys == nil {
                         keys = []
                     }
