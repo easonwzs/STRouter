@@ -26,11 +26,13 @@ typealias STRouterOpenURLCompletionType = (Any?)->Void
 
 class STRouter : NSObject {
     
-    public static let routerParameterURL = kRouterParameterURL
-    public static let routerParameterUserInfo = kRouterParameterUserInfo
+    // MARK: - public 属性
+    
+    @objc public static let routerParameterURL = kRouterParameterURL
+    @objc public static let routerParameterUserInfo = kRouterParameterUserInfo
     
     
-    // MARK: - public 属性与方法
+    // MARK: - public 方法
     
     /// 注册 URLPattern 对应的 Handler，在 handler 中可以初始化 VC，然后对 VC 做各种操作
     ///
@@ -38,7 +40,7 @@ class STRouter : NSObject {
     ///   - URLPattern: 带上 scheme，如 example://hexun.com/detail?:id
     ///   - toHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
-    public static func registerURLPattern(URLPattern:String?,toHandler handler:STRouterHandlerType?){
+    @objc public static func registerURLPattern(URLPattern:String?,toHandler handler:STRouterHandlerType?){
         if handler == nil || URLPattern == nil { return }
         sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
     }
@@ -50,7 +52,7 @@ class STRouter : NSObject {
     ///   - toObjectHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                      假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
     ///                      此block需要返回一个值给调用方
-    public static func registerURLPattern(URLPattern:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
+    @objc public static func registerURLPattern(URLPattern:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
         if handler == nil || URLPattern == nil { return }
         sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
     }
@@ -58,7 +60,7 @@ class STRouter : NSObject {
     /// 取消注册某个 URL Pattern
     ///
     /// - Parameter URLPattern: 需要取消的 URL
-    public static func deregisterURLPattern(URLPattern:String?) {
+    @objc public static func deregisterURLPattern(URLPattern:String?) {
         if canOpenURL(URL: URLPattern) {
             sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:nil)
         }
@@ -68,7 +70,7 @@ class STRouter : NSObject {
     /// 会在已注册的 URL -> Handler 中寻找，如果找到，则执行 Handler
     ///
     /// - Parameter URL: URL 带 Scheme，如 example://hexun.com/detail?id=4
-    public static func openURL(URL:String?){
+    @objc public static func openURL(URL:String?){
         openURL(URL: URL, completion: nil)
     }
     
@@ -77,7 +79,7 @@ class STRouter : NSObject {
     /// - Parameters:
     ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    public static func openURL(URL:String?,completion:STRouterOpenURLCompletionType?){
+    @objc public static func openURL(URL:String?,completion:STRouterOpenURLCompletionType?){
         openURL(URL: URL, withUserInfo: nil, completion: completion)
     }
     
@@ -87,7 +89,7 @@ class STRouter : NSObject {
     ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
     ///   - userInfo: 附加参数
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    public static func openURL(URL:String?,withUserInfo userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
+    @objc public static func openURL(URL:String?,withUserInfo userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
         guard let openURL = URL else { return }
         
         guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return }
@@ -106,7 +108,7 @@ class STRouter : NSObject {
     ///
     /// - Parameter URL: 需要打开的 URL
     /// - Returns: 此方法可以获取一个返回值
-    public static func objectForURL(URL:String?) -> Any? {
+    @objc public static func objectForURL(URL:String?) -> Any? {
         return objectForURL(URL: URL, withUserInfo: nil)
     }
     
@@ -116,7 +118,7 @@ class STRouter : NSObject {
     ///   - URL: 需要打开的 URL
     ///   - userInfo: 附加参数
     /// - Returns: 此方法可以获取一个返回值
-    public static func objectForURL(URL:String?,withUserInfo userInfo:[String:Any]?) -> Any? {
+    @objc public static func objectForURL(URL:String?,withUserInfo userInfo:[String:Any]?) -> Any? {
         guard let openURL = URL else { return nil }
         guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return nil }
         
@@ -135,7 +137,7 @@ class STRouter : NSObject {
     ///
     /// - Parameter URL: 需要检查的 URL
     /// - Returns: 返回 true 表示已注册，false 未注册
-    public static func canOpenURL(URL:String?) -> Bool {
+    @objc public static func canOpenURL(URL:String?) -> Bool {
         guard let openURL = URL else { return false }
         guard let param:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return false }
         if param["block"] != nil{
@@ -146,21 +148,6 @@ class STRouter : NSObject {
     
     
     
-    /// 可以获取根视图导航控制器的只读计算属性
-    public static var rootNavigationController:UINavigationController? {
-        
-        guard let root = UIApplication.shared.keyWindow?.rootViewController else { return nil }
-        
-        if root is UINavigationController {
-            return root as? UINavigationController
-        }else if root is UITabBarController {
-            let tVC = (root as! UITabBarController).selectedViewController
-            if tVC != nil && tVC is UINavigationController {
-                return tVC as? UINavigationController
-            }
-        }
-        return nil
-    }
     
     // MARK: - private 私有属性与方法
     
@@ -230,19 +217,19 @@ class STRouter : NSObject {
         pathComponents.append(pathSegments.first!)
         
         // 如果只有协议，那么放一个占位符
-        if (pathSegments.count >= 2 && !pathSegments[1].characters.isEmpty) || pathSegments.count < 2 {
+        if (pathSegments.count >= 2 && !pathSegments[1].isEmpty) || pathSegments.count < 2 {
             pathComponents.append(ST_ROUTER_WILDCARD_CHARACTER)
         }
         
-        
         // 如果传入的地址不是标准地址，则退出
+        //        URL.sub
         guard let urlComponent = NSURL.init(string: String(URL[upperBound...])) else { return [] }
         // 如果不可获取地址的组成，则退出
         guard var components = urlComponent.pathComponents else { return [] }
         // 获取地址组成是无法获取'?'分割的元素，所以需要自己添加地址后链接的参数
         let questionMarkSegments = URL.components(separatedBy: "?")
         
-        if questionMarkSegments.count >= 2 && !questionMarkSegments[1].characters.isEmpty {
+        if questionMarkSegments.count >= 2 && !questionMarkSegments[1].isEmpty {
             if let index = URL.range(of: "?")?.upperBound {
                 let p = String(URL[index...])
                 components.append(p)
@@ -272,7 +259,7 @@ class STRouter : NSObject {
             var keys:[String]?
             for var value in keyComponents {
                 value = value.replacingOccurrences(of: " ", with: "")
-                if !value.characters.isEmpty {
+                if !value.isEmpty {
                     if keys == nil {
                         keys = []
                     }

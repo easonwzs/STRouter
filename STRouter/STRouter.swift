@@ -5,7 +5,7 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.2
+//  version : 1.3
 
 import Foundation
 import UIKit
@@ -29,8 +29,8 @@ class STRouter : NSObject {
     
     // MARK: - public 属性
     
-    public static let routerParameterURL = kRouterParameterURL
-    public static let routerParameterUserInfo = kRouterParameterUserInfo
+    @objc public static let routerParameterURL = kRouterParameterURL
+    @objc public static let routerParameterUserInfo = kRouterParameterUserInfo
     
     
     // MARK: - public 方法
@@ -41,7 +41,7 @@ class STRouter : NSObject {
     ///   - URLPattern: 带上 scheme，如 example://hexun.com/detail?:id
     ///   - toHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
-    public static func registerURLPattern(URLPattern:String?,toHandler handler:STRouterHandlerType?){
+    @objc public static func registerURLPattern(URLPattern:String?,toHandler handler:STRouterHandlerType?){
         if handler == nil || URLPattern == nil { return }
         sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
     }
@@ -53,7 +53,7 @@ class STRouter : NSObject {
     ///   - toObjectHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                      假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
     ///                      此block需要返回一个值给调用方
-    public static func registerURLPattern(URLPattern:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
+    @objc public static func registerURLPattern(URLPattern:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
         if handler == nil || URLPattern == nil { return }
         sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
     }
@@ -61,7 +61,7 @@ class STRouter : NSObject {
     /// 取消注册某个 URL Pattern
     ///
     /// - Parameter URLPattern: 需要取消的 URL
-    public static func deregisterURLPattern(URLPattern:String?) {
+    @objc public static func deregisterURLPattern(URLPattern:String?) {
         if canOpenURL(URL: URLPattern) {
             sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:nil)
         }
@@ -71,7 +71,7 @@ class STRouter : NSObject {
     /// 会在已注册的 URL -> Handler 中寻找，如果找到，则执行 Handler
     ///
     /// - Parameter URL: URL 带 Scheme，如 example://hexun.com/detail?id=4
-    public static func openURL(URL:String?){
+    @objc public static func openURL(URL:String?){
         openURL(URL: URL, completion: nil)
     }
     
@@ -80,7 +80,7 @@ class STRouter : NSObject {
     /// - Parameters:
     ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    public static func openURL(URL:String?,completion:STRouterOpenURLCompletionType?){
+    @objc public static func openURL(URL:String?,completion:STRouterOpenURLCompletionType?){
         openURL(URL: URL, withUserInfo: nil, completion: completion)
     }
     
@@ -90,7 +90,7 @@ class STRouter : NSObject {
     ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
     ///   - userInfo: 附加参数
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    public static func openURL(URL:String?,withUserInfo userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
+    @objc public static func openURL(URL:String?,withUserInfo userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
         guard let openURL = URL else { return }
         
         guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return }
@@ -109,7 +109,7 @@ class STRouter : NSObject {
     ///
     /// - Parameter URL: 需要打开的 URL
     /// - Returns: 此方法可以获取一个返回值
-    public static func objectForURL(URL:String?) -> Any? {
+    @objc public static func objectForURL(URL:String?) -> Any? {
         return objectForURL(URL: URL, withUserInfo: nil)
     }
     
@@ -119,7 +119,7 @@ class STRouter : NSObject {
     ///   - URL: 需要打开的 URL
     ///   - userInfo: 附加参数
     /// - Returns: 此方法可以获取一个返回值
-    public static func objectForURL(URL:String?,withUserInfo userInfo:[String:Any]?) -> Any? {
+    @objc public static func objectForURL(URL:String?,withUserInfo userInfo:[String:Any]?) -> Any? {
         guard let openURL = URL else { return nil }
         guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return nil }
         
@@ -138,7 +138,7 @@ class STRouter : NSObject {
     ///
     /// - Parameter URL: 需要检查的 URL
     /// - Returns: 返回 true 表示已注册，false 未注册
-    public static func canOpenURL(URL:String?) -> Bool {
+    @objc public static func canOpenURL(URL:String?) -> Bool {
         guard let openURL = URL else { return false }
         guard let param:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return false }
         if param["block"] != nil{
