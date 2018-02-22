@@ -5,27 +5,27 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.3
+//  version : 1.4
 
 import Foundation
 import UIKit
 
-let kRouterParameterURL = "RouterParameterURL"
-let kRouterParameterUserInfo = "RouterParameterUserInfo"
+public let kRouterParameterURL = "RouterParameterURL"
+public let kRouterParameterUserInfo = "RouterParameterUserInfo"
 
 private let ST_ROUTER_WILDCARD_CHARACTER = "~"
 private let ST_SpecialCharacters = "/?&."
 
 
 /// routerParameters 里内置的几个参数会用到上面定义的 string
-typealias STRouterHandlerType = ([String:Any],STRouterOpenURLCompletionType?) -> Void
+public typealias STRouterHandlerType = ([String:Any],STRouterOpenURLCompletionType?) -> Void
 /// 需要返回一个值，配合 objectForURL: 使用
-typealias STRouterObjectHandlerType = ([String:Any]) -> Any?
+public typealias STRouterObjectHandlerType = ([String:Any]) -> Any?
 /// open 方法中 completion 闭包
-typealias STRouterOpenURLCompletionType = (Any?)->Void
+public typealias STRouterOpenURLCompletionType = (Any?)->Void
 
 
-class STRouter : NSObject {
+public final class STRouter : NSObject {
     
     // MARK: - public 属性
     
