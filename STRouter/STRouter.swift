@@ -5,7 +5,7 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.4
+//  version : 1.5
 
 import Foundation
 import UIKit
