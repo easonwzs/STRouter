@@ -224,7 +224,7 @@ public final class STRouter : NSObject {
         
         // 如果传入的地址不是标准地址，则退出
 //        URL.sub
-        guard let urlComponent = NSURL.init(string: String(URL[upperBound...])) else { return [] }
+        guard let urlSet = String(URL[upperBound...]).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed) , let urlComponent = NSURL.init(string: urlSet) else { return [] }
         // 如果不可获取地址的组成，则退出
         guard var components = urlComponent.pathComponents else { return [] }
         // 获取地址组成是无法获取'?'分割的元素，所以需要自己添加地址后链接的参数
