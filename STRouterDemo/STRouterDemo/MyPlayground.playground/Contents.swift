@@ -5,7 +5,7 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.4
+//  version : 1.7
 
 import Foundation
 import UIKit
@@ -35,65 +35,66 @@ public final class STRouter : NSObject {
     
     // MARK: - public 方法
     
-    /// 注册 URLPattern 对应的 Handler，在 handler 中可以初始化 VC，然后对 VC 做各种操作
+    /// 注册 url 对应的 handler
+    /// e.g. 在 handler 中可以初始化 VC，然后对 VC 做各种操作
     ///
     /// - Parameters:
-    ///   - URLPattern: 带上 scheme，如 example://hexun.com/detail?:id
-    ///   - toHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
+    ///   - url: 带上 scheme，如 example://hexun.com/detail?:id
+    ///   - handler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
-    @objc public static func registerURLPattern(URLPattern:String?,toHandler handler:STRouterHandlerType?){
-        if handler == nil || URLPattern == nil { return }
-        sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
+    @objc public static func register(_ url:String?,handler:STRouterHandlerType?){
+        if handler == nil || url == nil { return }
+        sharedInstance.addURLPattern(url!,handler:handler)
     }
     
-    /// 注册 URLPattern 对应的 ObjectHandler，需要返回一个值给调用方
+    /// 注册 url 对应的 ObjectHandler，需要返回一个值给调用方
     ///
     /// - Parameters:
-    ///   - URLPattern: 带上 scheme，如 example://hexun.com/detail?:id
+    ///   - url: 带上 scheme，如 example://hexun.com/detail?:id
     ///   - toObjectHandler: 该 block 会传一个字典，包含了注册的 URL 中对应的变量。
     ///                      假如注册的 URL 为 example://hexun.com/detail?:id 那么，就会传一个 ["id":4] 这样的字典过来
     ///                      此block需要返回一个值给调用方
-    @objc public static func registerURLPattern(URLPattern:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
-        if handler == nil || URLPattern == nil { return }
-        sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:handler)
+    @objc public static func register(_ url:String?,toObjectHandler handler:STRouterObjectHandlerType?) {
+        if handler == nil || url == nil { return }
+        sharedInstance.addURLPattern(url!,handler:handler)
     }
     
-    /// 取消注册某个 URL Pattern
+    /// 取消注册某个 url
     ///
-    /// - Parameter URLPattern: 需要取消的 URL
-    @objc public static func deregisterURLPattern(URLPattern:String?) {
-        if canOpenURL(URL: URLPattern) {
-            sharedInstance.addURLPattern(URLPattern: URLPattern!,handler:nil)
+    /// - Parameter url: 需要取消注册的 url
+    @objc public static func deregister(_ url:String?) {
+        if canOpen(url) {
+            sharedInstance.addURLPattern(url!,handler:nil)
         }
     }
     
-    /// 打开此 URL
-    /// 会在已注册的 URL -> Handler 中寻找，如果找到，则执行 Handler
+    /// 打开 url
+    /// 会在已注册的 url -> handler 中寻找，如果找到，则执行 handler
     ///
-    /// - Parameter URL: URL 带 Scheme，如 example://hexun.com/detail?id=4
-    @objc public static func openURL(URL:String?){
-        openURL(URL: URL, completion: nil)
+    /// - Parameter url: url 带 Scheme，如 example://hexun.com/detail?id=4
+    @objc public static func open(_ url:String?){
+        open(url, completion: nil)
     }
     
-    /// 打开此 URL，同时当操作完成时，执行额外的代码
+    /// 打开此 url，同时当操作完成时，执行额外的代码
     ///
     /// - Parameters:
-    ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
+    ///   - url: 带 Scheme 的 url，如 example://hexun.com/detail?id=4
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    @objc public static func openURL(URL:String?,completion:STRouterOpenURLCompletionType?){
-        openURL(URL: URL, withUserInfo: nil, completion: completion)
+    @objc public static func open(_ url:String?,completion:STRouterOpenURLCompletionType?){
+        open(url, userInfo: nil, completion: completion)
     }
     
-    /// 打开此 URL，带上附加信息，同时当操作完成时，执行额外的代码
+    /// 打开此 url，带上附加信息，同时当操作完成时，执行额外的代码
     ///
     /// - Parameters:
-    ///   - URL: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
+    ///   - url: 带 Scheme 的 URL，如 example://hexun.com/detail?id=4
     ///   - userInfo: 附加参数
     ///   - completion: URL 处理完成后的 callback，完成的判定跟具体的业务相关
-    @objc public static func openURL(URL:String?,withUserInfo userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
-        guard let openURL = URL else { return }
+    @objc public static func open(_ url:String?,userInfo:[String:Any]?,completion:STRouterOpenURLCompletionType?){
+        guard let openURL = url else { return }
         
-        guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return }
+        guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(openURL) else { return }
         
         if userInfo != nil {
             parameters[kRouterParameterUserInfo] = userInfo
@@ -105,23 +106,23 @@ public final class STRouter : NSObject {
         }
     }
     
-    /// 查找谁对某个 URL 感兴趣，如果有的话，返回一个值
+    /// 查找谁对某个 url 感兴趣，如果有的话，返回一个值
     ///
-    /// - Parameter URL: 需要打开的 URL
+    /// - Parameter url: 需要打开的 URL
     /// - Returns: 此方法可以获取一个返回值
-    @objc public static func objectForURL(URL:String?) -> Any? {
-        return objectForURL(URL: URL, withUserInfo: nil)
+    @objc public static func objectForURL(_ url:String?) -> Any? {
+        return objectForURL(url, userInfo: nil)
     }
     
-    /// 查找谁对某个 URL 感兴趣，如果有的话，返回一个值
+    /// 查找谁对某个 url 感兴趣，如果有的话，返回一个值
     ///
     /// - Parameters:
-    ///   - URL: 需要打开的 URL
+    ///   - url: 需要打开的 URL
     ///   - userInfo: 附加参数
     /// - Returns: 此方法可以获取一个返回值
-    @objc public static func objectForURL(URL:String?,withUserInfo userInfo:[String:Any]?) -> Any? {
-        guard let openURL = URL else { return nil }
-        guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return nil }
+    @objc public static func objectForURL(_ url:String?,userInfo:[String:Any]?) -> Any? {
+        guard let openURL = url else { return nil }
+        guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(openURL) else { return nil }
         
         guard let handler = parameters["block"] as? STRouterObjectHandlerType else { return nil }
         
@@ -134,13 +135,13 @@ public final class STRouter : NSObject {
         
     }
     
-    /// 检查 URL 是否已在路由中进行注册
+    /// 检查 url 是否已在路由中进行注册
     ///
-    /// - Parameter URL: 需要检查的 URL
+    /// - Parameter url: 需要检查的 URL
     /// - Returns: 返回 true 表示已注册，false 未注册
-    @objc public static func canOpenURL(URL:String?) -> Bool {
-        guard let openURL = URL else { return false }
-        guard let param:[String:Any] = sharedInstance.extractParametersFromURL(url: openURL) else { return false }
+    @objc public static func canOpen(_ url:String?) -> Bool {
+        guard let openURL = url else { return false }
+        guard let param:[String:Any] = sharedInstance.extractParametersFromURL(openURL) else { return false }
         if param["block"] != nil{
             return true
         }
@@ -160,14 +161,14 @@ public final class STRouter : NSObject {
     /// 结构类似 @{@"beauty": @{@":id": {@"_", [block copy]}}}
     private var routers = [String:Any]()
     
-    /// 向路由中添加 URLPattern
+    /// 向路由中添加 url
     ///
     /// - Parameters:
-    ///   - URLPattern: 需要添加的 URLPattern
+    ///   - url: 需要添加的 url
     ///   - handler: handler
-    private func addURLPattern(URLPattern:String,handler: Any?){
+    private func addURLPattern(_ url:String,handler: Any?){
         
-        let pathComponents = pathComponentsFromURL(URL: URLPattern)
+        let pathComponents = pathComponentsFromURL(url)
         
         guard !pathComponents.isEmpty else { return }
         
@@ -204,15 +205,15 @@ public final class STRouter : NSObject {
     }
     
     
-    /// 解析 URL 路径的组成
+    /// 解析 url 路径的组成
     ///
     /// - Parameter URL: url
-    private func pathComponentsFromURL(URL:String) -> [String]{
+    private func pathComponentsFromURL(_ url:String) -> [String]{
         var pathComponents = [String]()
         // 如果传入的地址不包含 "://" ，则退出
-        guard let upperBound = URL.range(of: "://")?.upperBound else{ return pathComponents }
+        guard let upperBound = url.range(of: "://")?.upperBound else{ return pathComponents }
         
-        let pathSegments = URL.components(separatedBy: "://")
+        let pathSegments = url.components(separatedBy: "://")
         
         // 如果 URL 包含协议，那么把协议作为第一个元素放进去
         pathComponents.append(pathSegments.first!)
@@ -224,15 +225,15 @@ public final class STRouter : NSObject {
         
         // 如果传入的地址不是标准地址，则退出
         //        URL.sub
-        guard let urlSet = String(URL[upperBound...]).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed) , let urlComponent = NSURL.init(string: urlSet) else { return [] }
+        guard let urlSet = String(url[upperBound...]).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed) , let urlComponent = NSURL.init(string: urlSet) else { return [] }
         // 如果不可获取地址的组成，则退出
         guard var components = urlComponent.pathComponents else { return [] }
         // 获取地址组成是无法获取'?'分割的元素，所以需要自己添加地址后链接的参数
-        let questionMarkSegments = URL.components(separatedBy: "?")
+        let questionMarkSegments = url.components(separatedBy: "?")
         
         if questionMarkSegments.count >= 2 && !questionMarkSegments[1].isEmpty {
-            if let index = URL.range(of: "?")?.upperBound {
-                let p = String(URL[index...])
+            if let index = url.range(of: "?")?.upperBound {
+                let p = String(url[index...])
                 components.append(p)
             }
         }
@@ -249,7 +250,7 @@ public final class STRouter : NSObject {
     ///
     /// - Parameter url:传入url
     /// - Returns: 返回解析后的字典
-    private func extractParametersFromURL(url:String) -> [String:Any]? {
+    private func extractParametersFromURL(_ url:String) -> [String:Any]? {
         
         /// 取出注册的 URL 中包含的 key 值
         ///
@@ -305,7 +306,7 @@ public final class STRouter : NSObject {
         var subRouters = self.routers
         guard !subRouters.keys.isEmpty else { return nil }
         
-        let pathComponents = pathComponentsFromURL(URL: url)
+        let pathComponents = pathComponentsFromURL(url)
         
         var found = false
         // 协议通配block
@@ -384,81 +385,10 @@ public final class STRouter : NSObject {
 
 
 
-
-
-
-
-
-
-//STRouter.registerURLPattern(URLPattern: "example://...") { (param) in
-//    print("****** example Fallback ******")
-//}
-//
-//STRouter.registerURLPattern(URLPattern: "example://hexun.com/detail?:name") { (dict) in
-//    // 此处的 block 不再会被调用到
-//    print("此处的 block 不再会被调用到")
-//}
-//
-//STRouter.registerURLPattern(URLPattern: "example://hexun.com/detail?:name:age") { (dict) in
-//    // 此处替换掉上面注册的 URLPattern
-//    print("此处替换掉上面注册的 URLPattern")
-//}
-////HXRouter.deregisterURLPattern(URLPattern: "example://hexun.com/detail?:name:age")
-//STRouter.openURL(URL: "example://hexun.com/detail?name=eason&age=27")
-//
-//
-//STRouter.registerURLPattern(URLPattern: "example://getValue?:name:id") { (param) -> Any? in
-//    param
-//    return "hello world"
-//}
-////var value = HXRouter.objectForURL(URL: "example://getValue?name=eason&id=27")
-//STRouter.deregisterURLPattern(URLPattern: "example://getValue?:name:id")
-//var value2 = STRouter.objectForURL(URL: "example://getValue?name=eason&id=27", withUserInfo: ["123":123])
-//
-//
-//STRouter.registerURLPattern(URLPattern: "example://hexun.com/detail?:name:sex") { (param) -> Any? in
-//    // 下面可以在拿到参数后，为其他组件提供对应的服务
-//    let name = param["name"]
-//    let sex = param["sex"]
-//    // 此 handler 需要返回一个值提供给调用者
-//    return "result"
-//}
-//
-//var result = STRouter.objectForURL(URL: "example://hexun.com/detail?name=easonwzs&sex=male")
-
-
-
-
-
-
-//STRouter.registerURLPattern(URLPattern: "http://...") { (param, _) in
-//    print("------------------")
-//}
-
-STRouter.registerURLPattern(URLPattern: "http://www.baidu.com?...") { (param, _) in
-    print("================== \(param)")
+STRouter.register("http://www.baidu.com?") { (param, _) in
+    print("\(param)")
 }
 
-//STRouter.registerURLPattern(URLPattern: "http://chat.hexun.com/437/default.html") { (param, _) in
-//    print("&&&&&&&&&&&&&&&&&&&")
-//}
-//STRouter.registerURLPattern(URLPattern: "http://chat.hexun.com/437/default.html") { (param, _) in
-//    print("&&&&&&&&&&&&&&&&&&&")
-//}
-
-//STRouter.openURL(URL: "http://chat.hexun.com/437/default.html?")
-STRouter.openURL(URL: "http://www.baidu.com?name=easonwzs&age=27")
-
-
-
-
-//let greeting = "hi there ! eason wang"
-//let end = greeting.index(of: "!")!
-//let subStr = greeting[end...]
-
-
-
-
-
+STRouter.open("http://www.baidu.com")
 
 

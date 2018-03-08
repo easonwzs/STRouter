@@ -78,47 +78,47 @@ class RouterDetailViewController: UIViewController {
     /// 基本用法
     
     @objc func routerBasicUsage() {
-        STRouter.registerURLPattern(URLPattern: "st://router/detail") {[unowned self] (param,_) in
+        STRouter.register("st://router/detail") {[unowned self] (param,_) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
         }
-        STRouter.openURL(URL: "st://router/detail")
+        STRouter.open("st://router/detail")
     }
     
     /// 自定义参数
     @objc func routerParameters() {
-        STRouter.registerURLPattern(URLPattern: "st://router/parameters?:name:sex") {[unowned self] (param,_) in
+        STRouter.register("st://router/parameters?:name:sex") {[unowned self] (param,_) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
         }
-        STRouter.openURL(URL: "st://router/parameters?name=EASON&sex=male")
+        STRouter.open("st://router/parameters?name=EASON&sex=male")
     }
     
     /// 传入字典信息
     @objc func routerUserInfo() {
-        STRouter.registerURLPattern(URLPattern: "st://router/userInfo") {[unowned self] (param,_) in
+        STRouter.register("st://router/userInfo") {[unowned self] (param,_) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
         }
-        STRouter.openURL(URL: "st://router/userInfo", withUserInfo: ["name":"EASON","sex":"male"], completion: nil)
+        STRouter.open("st://router/userInfo", userInfo: ["name":"EASON","sex":"male"], completion: nil)
     }
     
     /// Fallback 到全局 URL Pattern 中
     @objc func routerFallback() {
         
         // 协议 Fallback
-        STRouter.registerURLPattern(URLPattern: "st://...") { (_,_) in
+        STRouter.register("st://...") { (_,_) in
             print("打开的 URL 不存在，根据 URL 协议寻找 Fallback 调用")
         }
         
-        STRouter.registerURLPattern(URLPattern: "st://router/fallback") {[unowned self] (param) in
+        STRouter.register("st://router/fallback") {[unowned self] (param) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
         }
         // 调用的 URL 不存在路由中，将按照协议调用 Fallback
-        STRouter.openURL(URL: "st://fallback")
+        STRouter.open("st://fallback")
     }
     
     /// Open 结束后执行 Completion Block【注：此用法无法在 OC-Swift 混编时使用】
     @objc func routerCompletion() {
         
-        STRouter.registerURLPattern(URLPattern: "st://router/completion") { (param,closer) in
+        STRouter.register("st://router/completion") { (param,closer) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
             
             if closer != nil {
@@ -127,7 +127,7 @@ class RouterDetailViewController: UIViewController {
         }
         
         // 调用的 URL 不存在路由中，将按照协议调用 Fallback
-        STRouter.openURL(URL: "st://router/completion") { (param) in
+        STRouter.open("st://router/completion") { (param) in
             if param != nil {
                 print(param!)
             }
@@ -137,22 +137,22 @@ class RouterDetailViewController: UIViewController {
     /// 取消注册 URL Pattern
     @objc func routerDeregisterURLPattern() {
         // 注册 URL
-        STRouter.registerURLPattern(URLPattern: "st://router/deregisterURLPattern") {[unowned self] (param) in
+        STRouter.register("st://router/deregisterURLPattern") {[unowned self] (param) in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
         }
         // 取消注册的 URL
-        STRouter.deregisterURLPattern(URLPattern: "st://router/deregisterURLPattern")
+        STRouter.deregister("st://router/deregisterURLPattern")
         
-        STRouter.openURL(URL: "st://router/deregisterURLPattern")
+        STRouter.open("st://router/deregisterURLPattern")
     }
     
     /// 同步获取 URL 对应的 Object
     @objc func routerObjectForURL() {
-        STRouter.registerURLPattern(URLPattern: "st://router/objectForURL") { [unowned self] (param) -> Any? in
+        STRouter.register("st://router/objectForURL") { [unowned self] (param) -> Any? in
             self.textView.text = self.formatterSwiftDictionary(dict: param)
             return "*****111222333444555666*****"
         }
-        let value = STRouter.objectForURL(URL: "st://router/objectForURL")
+        let value = STRouter.objectForURL("st://router/objectForURL")
         print(value!)
     }
     

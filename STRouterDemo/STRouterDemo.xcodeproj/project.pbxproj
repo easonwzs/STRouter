@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D904A82320512CFA00B2A872 /* TestRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = D904A82220512CFA00B2A872 /* TestRouter.m */; };
 		D94CA1751F7368BD00F50902 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94CA1741F7368BD00F50902 /* AppDelegate.swift */; };
 		D94CA17A1F7368BD00F50902 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D94CA1781F7368BD00F50902 /* Main.storyboard */; };
 		D94CA17C1F7368BE00F50902 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94CA17B1F7368BE00F50902 /* Assets.xcassets */; };
@@ -17,6 +18,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D904A82020512CFA00B2A872 /* STRouterDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "STRouterDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		D904A82120512CFA00B2A872 /* TestRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestRouter.h; sourceTree = "<group>"; };
+		D904A82220512CFA00B2A872 /* TestRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestRouter.m; sourceTree = "<group>"; };
 		D94CA1711F7368BD00F50902 /* STRouterDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = STRouterDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94CA1741F7368BD00F50902 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D94CA1791F7368BD00F50902 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -63,11 +67,14 @@
 				D94CA1741F7368BD00F50902 /* AppDelegate.swift */,
 				D94CA1891F7396E200F50902 /* RouterDetailViewController.swift */,
 				D94CA18A1F7396E200F50902 /* RouterListViewController.swift */,
+				D904A82120512CFA00B2A872 /* TestRouter.h */,
+				D904A82220512CFA00B2A872 /* TestRouter.m */,
 				D94CA1781F7368BD00F50902 /* Main.storyboard */,
 				D94CA1881F738CE400F50902 /* MyPlayground.playground */,
 				D94CA17B1F7368BE00F50902 /* Assets.xcassets */,
 				D94CA17D1F7368BE00F50902 /* LaunchScreen.storyboard */,
 				D94CA1801F7368BE00F50902 /* Info.plist */,
+				D904A82020512CFA00B2A872 /* STRouterDemo-Bridging-Header.h */,
 			);
 			path = STRouterDemo;
 			sourceTree = "<group>";
@@ -113,6 +120,7 @@
 				TargetAttributes = {
 					D94CA1701F7368BD00F50902 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -155,6 +163,7 @@
 			files = (
 				D94CA18F1F73984E00F50902 /* STRouter.swift in Sources */,
 				D94CA18E1F73981F00F50902 /* RouterListViewController.swift in Sources */,
+				D904A82320512CFA00B2A872 /* TestRouter.m in Sources */,
 				D94CA18D1F73981F00F50902 /* RouterDetailViewController.swift in Sources */,
 				D94CA1751F7368BD00F50902 /* AppDelegate.swift in Sources */,
 			);
@@ -293,12 +302,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S7TBZB2NX6;
 				INFOPLIST_FILE = STRouterDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.site.STRouterDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "STRouterDemo/STRouterDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -308,12 +320,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S7TBZB2NX6;
 				INFOPLIST_FILE = STRouterDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.site.STRouterDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "STRouterDemo/STRouterDemo-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
