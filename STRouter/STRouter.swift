@@ -5,7 +5,7 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.7
+//  version : 1.8
 
 import Foundation
 import UIKit
@@ -240,7 +240,11 @@ public final class STRouter : NSObject {
         
         for pathComponent in components {
             if pathComponent == "/" || pathComponent == "?" { continue }
-            pathComponents.append(pathComponent)
+            if let noEncoding = pathComponent.removingPercentEncoding {
+                pathComponents.append(noEncoding)
+            }else{
+                pathComponents.append(pathComponent)
+            }
         }
         return pathComponents
     }

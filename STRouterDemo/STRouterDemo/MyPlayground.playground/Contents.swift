@@ -240,7 +240,11 @@ public final class STRouter : NSObject {
         
         for pathComponent in components {
             if pathComponent == "/" || pathComponent == "?" { continue }
-            pathComponents.append(pathComponent)
+            if let noEncoding = pathComponent.removingPercentEncoding {
+                pathComponents.append(noEncoding)
+            }else{
+                pathComponents.append(pathComponent)
+            }
         }
         return pathComponents
     }
