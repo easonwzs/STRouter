@@ -5,13 +5,17 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 1.7
+//  version : 2.0
 
 import Foundation
 import UIKit
 
-public let kRouterParameterURL = "RouterParameterURL"
-public let kRouterParameterUserInfo = "RouterParameterUserInfo"
+public let kSTURL = "url"
+public let kSTUserInfo = "userInfo"
+public let kSTScheme = "scheme"
+public let kSTHost = "host"
+public let kSTPort = "port"
+public let kSTPath = "path"
 
 private let ST_ROUTER_WILDCARD_CHARACTER = "~"
 private let ST_SpecialCharacters = "/?&."
@@ -29,8 +33,12 @@ public final class STRouter : NSObject {
     
     // MARK: - public 属性
     
-    @objc public static let routerParameterURL = kRouterParameterURL
-    @objc public static let routerParameterUserInfo = kRouterParameterUserInfo
+    @objc public static let url         = kSTURL
+    @objc public static let userInfo    = kSTUserInfo
+    @objc public static let scheme      = kSTScheme
+    @objc public static let host        = kSTHost
+    @objc public static let port        = kSTPort
+    @objc public static let path        = kSTPath
     
     
     // MARK: - public 方法
@@ -97,7 +105,7 @@ public final class STRouter : NSObject {
         guard var parameters:[String:Any] = sharedInstance.extractParametersFromURL(openURL) else { return }
         
         if userInfo != nil {
-            parameters[kRouterParameterUserInfo] = userInfo
+            parameters[kSTUserInfo] = userInfo
         }
         
         if let handler = parameters["block"] as? STRouterHandlerType {
@@ -127,7 +135,7 @@ public final class STRouter : NSObject {
         guard let handler = parameters["block"] as? STRouterObjectHandlerType else { return nil }
         
         if userInfo != nil {
-            parameters[kRouterParameterUserInfo] = userInfo
+            parameters[kSTUserInfo] = userInfo
         }
         
         parameters["block"] = nil
@@ -158,7 +166,7 @@ public final class STRouter : NSObject {
     private override init(){}
     
     /// 保存所有已注册的 URL
-    /// 结构类似 @{@"beauty": @{@":id": {@"_", [block copy]}}}
+    /// 结构类似 ["beauty": [":id": ["_", (block)]]]
     private var routers = [String:Any]()
     
     /// 向路由中添加 url
@@ -210,6 +218,12 @@ public final class STRouter : NSObject {
     /// - Parameter URL: url
     private func pathComponentsFromURL(_ url:String) -> [String]{
         var pathComponents = [String]()
+        
+        // 优先处理 ...:// 重定向问题
+        if url.hasPrefix("...://") {
+            return ["...://","~","..."]
+        }
+        
         // 如果传入的地址不包含 "://" ，则退出
         guard let upperBound = url.range(of: "://")?.upperBound else{ return pathComponents }
         
@@ -225,7 +239,7 @@ public final class STRouter : NSObject {
         
         // 如果传入的地址不是标准地址，则退出
         //        URL.sub
-        guard let urlSet = String(url[upperBound...]).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed) , let urlComponent = NSURL.init(string: urlSet) else { return [] }
+        guard let urlSet = String(url[upperBound...]).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed) , let urlComponent = NSURL(string: urlSet) else { return [] }
         // 如果不可获取地址的组成，则退出
         guard var components = urlComponent.pathComponents else { return [] }
         // 获取地址组成是无法获取'?'分割的元素，所以需要自己添加地址后链接的参数
@@ -305,12 +319,14 @@ public final class STRouter : NSObject {
         }
         
         /// 配置 parameters
-        var parameters:[String:Any] = [kRouterParameterURL:url]
+        var parameters:[String:Any] = [kSTURL:url]
         
         var subRouters = self.routers
         guard !subRouters.keys.isEmpty else { return nil }
         
         let pathComponents = pathComponentsFromURL(url)
+        // 记录 scheme
+        parameters[kSTScheme] = pathComponents.first ?? nil
         
         var found = false
         // 协议通配block
@@ -319,9 +335,14 @@ public final class STRouter : NSObject {
         var isFinal = false
         var count = 0
         // 带标签的循环语句
-        ipBreak: for pathComponent in pathComponents {
+        ipBreak: for var pathComponent in pathComponents {
             count+=1
             let subRoutersKeys = subRouters.keys.sorted(by: >)
+            // 如果所有注册的路由中不包含该协议，则重定向
+            if count == 1 && !subRoutersKeys.contains(pathComponent) {
+                pathComponent = "...://"
+            }
+            
             /// 判断协议是否设置 Fallback
             if subRoutersKeys.contains("...") {
                 wildcardBlock = subRouters["..."] as? [String : Any]
@@ -388,11 +409,15 @@ public final class STRouter : NSObject {
 
 
 
-
-STRouter.register("http://www.baidu.com?") { (param, _) in
-    print("\(param)")
+STRouter.register("...://") { (param, _) in
+    print("...:// \(param)")
 }
 
-STRouter.open("http://www.baidu.com")
+STRouter.register("http://www.baidu.com/path1/path2/path3") { (param, _) in
+    print("baidu: \(param)")
+}
+////
+STRouter.open("http://www.baidu.com/path1/path2/path3")
+STRouter.open("teacher://www.baidu.com/path1/path2/path3?name=aaa")
 
 
