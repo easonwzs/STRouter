@@ -5,17 +5,17 @@
 //  Created by EasonWang on 2017/2/20.
 //  Copyright © 2017年 EasonWang. All rights reserved.
 //
-//  version : 2.0
+//  version : 2.1
 
 import Foundation
 import UIKit
 
-public let kSTURL = "url"
-public let kSTUserInfo = "userInfo"
-public let kSTScheme = "scheme"
-public let kSTHost = "host"
-public let kSTPort = "port"
-public let kSTPath = "path"
+public let kSTURL = "STURL"
+public let kSTUserInfo = "STUserInfo"
+public let kSTScheme = "STScheme"
+public let kSTHost = "STHost"
+public let kSTPort = "STPort"
+public let kSTPath = "STPath"
 
 private let ST_ROUTER_WILDCARD_CHARACTER = "~"
 private let ST_SpecialCharacters = "/?&."
